@@ -1,39 +1,60 @@
 'use client';
-import { useRouter } from 'next/navigation';
-// Components
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
-import RoodxInput from '@/components/roodx/input';
-import Arrow from '@/components/roodx/arrow';
-// Icons
-import { Loader2 } from 'lucide-react';
-// Modules
-import { usePasswordEmailForm } from '@/modules/auth/usePasswordForm';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 
-interface Props extends React.ComponentProps<'form'> {
+const formSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+});
+
+type FormData = z.infer<typeof formSchema>;
+
+interface ForgotEmailFormProps {
   onNext: () => void;
 }
 
-export default function ForgotEmailForm({ onNext }: Props) {
-  const { t, form, onSubmit, isLoading } = usePasswordEmailForm(onNext);
+export default function ForgotEmailForm({ onNext }: ForgotEmailFormProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+  });
 
-  const router = useRouter();
+  const onSubmit = async (data: FormData) => {
+    try {
+      // TODO: Implement API call to send reset code
+      console.log('Sending reset code to:', data.email);
+      toast.success('Reset code sent to your email');
+      onNext();
+    } catch (error) {
+      toast.error('Failed to send reset code');
+    }
+  };
 
   return (
-    <Form {...form}>
-      <Arrow onBack={() => router.push('/login')} />
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
-        <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-2xl font-bold">{t('recoveryPassword')}</h1>
-          <p className="w-full text-sm text-muted-foreground">{t('forgotPasswordDescription')}</p>
-        </div>
-        <div className="grid gap-4">
-          <RoodxInput control={form.control} label={t('input.userInfoAndUsername')} inputType="userInput" name="userInfo" type="text" placeholder={t('input.placeholder.userInfo')} />
-        </div>
-        <Button disabled={isLoading} type="submit" className="w-full">
-          {isLoading ? <Loader2 className="animate-spin" /> : t('next')}
-        </Button>
-      </form>
-    </Form>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="Enter your email"
+          {...register('email')}
+        />
+        {errors.email && (
+          <p className="text-sm text-red-500">{errors.email.message}</p>
+        )}
+      </div>
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? 'Sending...' : 'Send Reset Code'}
+      </Button>
+    </form>
   );
 } 
