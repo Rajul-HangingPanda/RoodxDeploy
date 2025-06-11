@@ -1,4 +1,7 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
@@ -145,10 +148,10 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-[var(--border)] outline-[var(--ring)];
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[var(--background)] text-[var(--foreground)];
   }
 
   /* Remove number input spinners */
@@ -162,7 +165,6 @@
     -moz-appearance: textfield;
   }
 }
-
 
 /* width */
 ::-webkit-scrollbar {
