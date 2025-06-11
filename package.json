@@ -24,7 +24,7 @@
     "@shadcn/ui": "^0.0.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "date-fns": "^4.1.0",
+    "date-fns": "^3.6.0",
     "framer-motion": "^12.16.0",
     "google-libphonenumber": "^3.2.41",
     "input-otp": "^1.4.2",
